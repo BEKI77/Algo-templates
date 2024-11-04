@@ -63,3 +63,48 @@ class SegmentTree:
             right //= 2
 
         return result
+
+######### another implementation for segement Tree simpler way!!
+
+
+class SegmentTree:
+
+    def __init__(self, nums: List[int]):
+        n = len(nums)
+        min_power_of_2 = (n-1).bit_length()
+        self.neutral_element = 0
+        self.tree_size = pow(2, min_power_of_2)
+        self.tree = [self.neutral_element] * (self.tree_size * 2)
+
+        for i in range(n):
+            self.tree[i + self.tree_size] = nums[i]
+
+        for i in range(self.tree_size - 1, 0, -1):
+            self.tree[i] = self.tree[i * 2] + self.tree[i * 2 + 1]
+
+    def update(self, index: int, val: int) -> None:
+        index += self.tree_size
+        self.tree[index] = val
+        while index > 1:
+            index //= 2
+            self.tree[index] = self.tree[index * 2] + self.tree[index * 2 + 1]
+
+
+    def sumRange(self, left: int, right: int) -> int:
+        left += self.tree_size
+        right += self.tree_size + 1
+        result = self.neutral_element
+
+        while left < right:
+            if left % 2:
+                result += self.tree[left]
+                left += 1
+
+            if right % 2:
+                right -= 1
+                result += self.tree[right]
+
+            left //= 2
+            right //= 2
+
+        return result
